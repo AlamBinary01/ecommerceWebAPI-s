@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins',sans-serif;
+}
+body{
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-image: url("1.jpg");
+  background-size: cover;
+}
+.container{
+  max-width: 700px;
+  width: 100%;
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 5px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+}
+.container img{
+  width: 250px;
+  margin-left: 190px;
+  margin-top: -25%;
+}
+
+.container .title{
+  font-size: 25px;
+  font-weight: 500;
+  text-align: center;
+  position: relative;
+}
+.content form .user-details{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 20px 0 12px 0;
+}
+form .user-details .input-box{
+  margin-bottom: 15px;
+  width: calc(100% / 2 - 20px);
+}
+.user-details .input-box input{
+  height: 45px;
+  width: 100%;
+  font-size: 16px;
+  border-radius: 5px;
+  padding-left: 15px;
+  border: 1px solid #ccc;
+  border-bottom-width: 2px;
+  transition: all 0.3s ease;
+}
+button{
+   height: 50px;
+   width: 500px;
+   align-items: center;
+   margin-left: 70px;
+   border-radius: 5px;
+   border: none;
+   color: #fff;
+   font-size: 18px;
+   font-weight: 500;
+   letter-spacing: 1px;
+   cursor: pointer;
+   transition: all 0.3s ease;
+   background-color: rgb(3, 3, 78);
+ }
+ button:hover{
+  transform: scale(0.99);
+  background:blue
+  }
+ @media(max-width: 584px){
+ .container{
+  max-width: 100%;
+}
+form .user-details .input-box{
+    margin-bottom: 15px;
+    width: 100%;
+  }
+.container img{
+  margin:  -100px 0px 0px 100px ;
+  width: 50%;
+  overflow-y: hidden;
+}
+button{
+  max-width: 100%;
+  max-height: 100px;
+  margin: 1px -1px;
+}
+  .content form .user-details{
+    max-height: 300px;
+    overflow-y: scroll;
+  }
+  .user-details::-webkit-scrollbar{
+    width: 5px;
+  }
+  }
+  @media(max-width: 459px){
+  .container .content .category{
+    flex-direction: column;
+  }
+}
+
+  </style>
+  <title>Registration Form</title>
+</head>
+<body  scroll="no" style="overflow: hidden">
+  <div class="container">
+    <img src="11.png" alt="avater">
+    <div class="title">Registration Form</div>
+    <div class="content">
+      <form action="#" name="registration"  onsubmit="return validateForm(event) " >
+        <div class="user-details">
+          <div class="input-box">
+            <span class="details">Full Name</span>
+            <input type="text" placeholder="Enter your name" name="name_"  id="name_id" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Username</span>
+            <input type="text" placeholder="Enter your username" id="u_id" required>
+            <span id="message"></span>
+          </div>
+          <div class="input-box">
+            <span class="details">Email</span>
+            <input type="email" placeholder="Enter your email"  id="email_" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Phone Number</span>
+            <input type="text" placeholder="Enter your number"  id="phone_" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Password</span>
+            <input type="password" placeholder="Enter your password"  id="password_" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Confirm Password</span>
+            <input type="password" placeholder="Confirm your password"  id="password_c" required>
+          </div>
+          <div class="input-box">
+            <span class="details">Qualification</span>
+            <input type="text" placeholder="Enter your qualificatoin"  id="qualification_"required>
+          </div>
+          <div class="input-box">
+            <span class="details">Age</span>
+            <input type="text" placeholder="Enter your age"  id="age_"required>
+          </div>
+        </div>
+       <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+<script src="index.js">
+function validateForm(event) {
+var phone = document.getElementById("phone_").value,
+email = document.getElementById("email_").value,
+name = document.getElementById("name_id").value,
+//username = document.getElementById("u_id").value,
+password =document.getElementById('password_').value,
+password_c = document.getElementById('password_c').value,
+// qualification = document.getElementById('qualification_'),
+age= document.getElementById('age_');      
+tomatch = /^\d{5}-\d{7}$/,
+emailMatch =/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+errors = [];
+name_format=/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+if (!tomatch.test(phone)){
+  errors.push("The phone number must be formated as follows: XXXXX-XXXXXXX");
+}
+if(name_format.test(name)){
+  errors.push("Name cannot contain special")
+}
+ if (!emailMatch.test(email)){
+  errors.push("The email must be formated as follows: name@domain.com.");
+}
+if(password.length<6){
+  errors.push("The length of password is small");
+}else if(password.match(emailMatch)){
+  console.log('Strong password');
+}
+
+if(password!=password_c){
+  errors.push('Password does not match Try again ...');
+}
+if(age<13){
+  errors.push('Age must be greater than 13');
+}
+if (errors.length) {
+  event.preventDefault();
+  alert(errors.join("\n"));
+}
+}
+</script>
+</html>

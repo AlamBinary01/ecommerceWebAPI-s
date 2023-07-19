@@ -165,7 +165,7 @@ app.post('/login', async (req, res) => {
     }
 
     // Generate and sign a JWT
-    const token = jwt.sign({ userId: user._id, role: user.role }, '03079957468', { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id, role: user.role }, '03079957468', { expiresIn: '10s' });
 
     res.json({ message: 'Login successful', token });
   } catch (err) {

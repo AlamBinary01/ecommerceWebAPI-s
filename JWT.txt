@@ -1,0 +1,6 @@
+Client request kry ga server pai
+server creates a JWT token
+Server Returns JWT to the Client
+client send a copy of the JWT when making a request
+server checks jwt signature
+server sends response to client

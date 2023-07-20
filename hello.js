@@ -146,7 +146,7 @@ app.post('/signup', async (req, res) => {
     res.status(500).json({ error: 'Failed to signup' });
   }
 });
-// User login route
+
 // User login route
 app.post('/login', async (req, res) => {
   try {
@@ -163,9 +163,9 @@ app.post('/login', async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
-
+    
     // Generate and sign a JWT
-    const token = jwt.sign({ userId: user._id, role: user.role }, '03079957468', { expiresIn: '10s' });
+    const token = jwt.sign({ userId: user._id, role: user.role }, '03079957468', { expiresIn: '10h' });
 
     res.json({ message: 'Login successful', token });
   } catch (err) {

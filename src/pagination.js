@@ -34,7 +34,7 @@ const bookSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  genre: {
+  iformation: {
     type: String,
     required: true,
   },
@@ -47,12 +47,12 @@ app.use(bodyParser.json());
 
 // Add a new book to the database
 app.post('/api/books', async (req, res) => {
-  const { title, author, genre } = req.body;
-  if (!title || !author || !genre) {
+  const { title, author, iformation } = req.body;
+  if (!title || !author || !iformation) {
     return res.status(400).json({ error: 'All fields are required' });
   }
   try {
-    const newBook = new Book({ title, author, genre });
+    const newBook = new Book({ title, author, iformation });
     const savedBook = await newBook.save();
     res.status(201).json(savedBook);
   } catch (err) {
@@ -60,6 +60,7 @@ app.post('/api/books', async (req, res) => {
     res.status(500).json({ error: 'Failed to add the book' });
   }
 });
+//find records 
 app.get('/api/records', async (req, res) => {
   try {
     const items = await Book.find();
@@ -69,6 +70,7 @@ app.get('/api/records', async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve items' });
   }
 });
+
 app.get('/api/books', async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 4;
@@ -109,6 +111,26 @@ app.get('/api/search', async (req, res) => {
     res.status(500).json({ error: 'Failed to search books' });
   }
 });
+app.get('/api/filter/authors', async (req, res) => {
+  const { author } = req.query;
+
+  if (!author) {
+    return res.status(400).json({ error: 'Author name is required for filtering' });
+  }
+
+  try {
+    const books = await Book.find({
+      author: { $regex: author, $options: 'i' } // Case-insensitive search by author name
+    });
+
+    res.status(200).json(books);
+  } catch (err) {
+    console.error('Error filtering books by author:', err);
+    res.status(500).json({ error: 'Failed to filter books by author' });
+  }
+});
+
+
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

@@ -5,6 +5,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://haseebmushtaq2002:beInHYjqwmFJCY1f@cluster0.jslfzox.mongodb.net/?retryWrites=true&w=majority', {
@@ -30,8 +31,8 @@ app.use(express.json());
 // Create an API route to store data
 app.post('/items', async (req, res) => {
   try {
-    // const { name, quantity } = req.body;
-    
+    const { name, quantity } = req.body;
+
 
     // Create a new document
     const newItem = new Item({
@@ -138,9 +139,9 @@ app.post('/signup', async (req, res) => {
     });
 
     // Save the user to the database
-    await newUser.save();
+    const hello = await newUser.save();
 
-    res.status(201).json({ message: 'Signup successful' });
+    res.status(201).json(hello);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to signup' });
@@ -163,9 +164,9 @@ app.post('/login', async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
-    
+
     // Generate and sign a JWT
-    const token = jwt.sign({ userId: user._id, role: user.role }, '03079957468', { expiresIn: '10h' });
+    const token = jwt.sign({ userId: user._id, role: user.role }, '03079957468', { expiresIn: '10s' });
 
     res.json({ message: 'Login successful', token });
   } catch (err) {
@@ -203,6 +204,90 @@ function verifyToken(req, res, next) {
     next();
   });
 }
+
+
+app.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check if the user exists
+    const user = await User.findOne({ email });
+    console.log(user)
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Generate a JWT with a short expiration time for password reset
+    const resetToken = jwt.sign({ userId: user._id }, '03079957468', { expiresIn: '1h' });
+
+    // Send the reset link to the user's email
+    const transporter = nodemailer.createTransport({
+      // Configure your email service
+      host: 'smtp.gmail.email',
+      port: 587,
+      secure: false,
+      requireTLS: true,
+      auth: {
+        user: "hase271002@gmail.com",
+        pass: "vjxbcbugijpxfilo",
+      },
+      debug: true,
+    });
+
+    const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+    const mailOptions = {
+      from: 'hase271002@gmail.com',
+      to: user.email,
+      subject: 'Password Reset',
+      text: `Click the link below to reset your password:\n${resetLink}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.json({ message: 'Password reset link sent to your email' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to send reset link' });
+  }
+});
+
+// Reset password route
+app.post('/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    // Verify the reset token
+    jwt.verify(token, '03079957468', async (err, decodedToken) => {
+      if (err) {
+        return res.status(401).json({ error: 'Invalid or expired token' });
+      }
+
+      const { userId } = decodedToken;
+
+      // Find the user by the decoded user ID
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update the user's password
+      user.password = hashedPassword;
+      await user.save();
+
+      res.json({ message: 'Password reset successful' });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to reset password' });
+  }
+});
+
+
+
+
 // Start the server
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
